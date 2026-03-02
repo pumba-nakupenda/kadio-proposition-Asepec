@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SÉNÉGAL EXPÉRIENCE — The Living Journey | KADIOR</title>
+    <meta name="description"
+        content="KADIOR présente 'SÉNÉGAL EXPÉRIENCE' à Riyad 2026. Un voyage scrollytelling à travers la Haute Couture Sénégalaise.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600&family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #B8860B;
+            --gold-light: #F0C040;
+            --gold-pale: #D4A843;
+            --dark: #0D0D0D;
+            --brown: #2C1810;
+            --cream: #FFF8DC;
+            --cream-dark: #F5ECC8;
+            --white: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --transition-smooth: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: clip;
+            /* clip doesn't break sticky, unlike hidden/auto */
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        .accent {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+        }
+
+        /* Progress Bar */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--gold-light);
+            z-index: 9999;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Patterns */
+        .pattern-diamond {
+            background-image: repeating-linear-gradient(45deg, rgba(184, 134, 11, 0.05) 0, rgba(184, 134, 11, 0.05) 1px, transparent 0, transparent 50%), repeating-linear-gradient(135deg, rgba(184, 134, 11, 0.05) 0, rgba(184, 134, 11, 0.05) 1px, transparent 0, transparent 50%);
+            background-size: 40px 40px;
+        }
+
+        .pattern-bogolan {
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(184, 134, 11, 0.03) 15px, rgba(184, 134, 11, 0.03) 30px);
+        }
+
+        .pattern-wax {
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(184, 134, 11, 0.02) 8px, rgba(184, 134, 11, 0.02) 9px), repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(184, 134, 11, 0.02) 8px, rgba(184, 134, 11, 0.02) 9px);
+        }
+
+        /* Scrollytelling Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: var(--transition-smooth);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-scale {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        .reveal-scale.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Global Header */
+        .wordmark {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            font-size: 18px;
+            letter-spacing: 0.3em;
+            z-index: 100;
+            text-transform: uppercase;
+        }
+
+        /* HERO */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 1;
+            margin: 1rem 0;
+        }
+
+        .hero-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: var(--transition-smooth);
+        }
+
+        .hero-title span.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            animation: bounce 2s infinite;
+            color: var(--gold);
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .hero-cta {
+            margin-top: 3rem;
+            padding: 1.2rem 3rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(184, 134, 11, 0.5);
+            color: var(--gold);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .hero-cta:hover {
+            background: var(--gold);
+            color: var(--dark);
+            box-shadow: 0 0 30px rgba(184, 134, 11, 0.6);
+            transform: scale(1.05);
+        }
+
+        .hero-cta::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+            animation: pulse 4s infinite;
+            pointer-events: none;
+        }
+
+        /* Ambient Audio Toggle */
+        #audio-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184, 134, 11, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            transition: var(--transition-smooth);
+            color: var(--gold);
+        }
+
+        #audio-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(184, 134, 11, 0.4);
+        }
+
+        .sound-wave {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 15px;
+        }
+
+        .sound-wave span {
+            width: 2px;
+            background: var(--gold);
+            animation: wave 1s infinite alternate;
+        }
+
+        .sound-wave.muted span {
+            height: 2px !important;
+            animation: none;
+        }
+
+        @keyframes wave {
+            0% {
+                height: 3px;
+            }
+
+            100% {
+                height: 15px;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* CONCEPT (The Transition) */
+        #concept {
+            background: var(--cream);
+            color: var(--text-dark);
+            padding: 10rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .concept-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .concept-text {
+            font-size: 1.25rem;
+            line-height: 2;
+            margin: 3rem 0;
+        }
+
+        .quote {
+            font-size: 2rem;
+            color: var(--gold);
+            border-left: 4px solid var(--gold);
+            padding-left: 2rem;
+            text-align: left;
+            margin: 4rem 0;
+        }
+
+        /* THE HEART OF SCROLLYTELLING: ETHNIC JOURNEY */
+        #ethnie-journey {
+            position: relative;
+            background: var(--dark);
+            height: 600vh;
+            /* Parent height for 6 steps */
+        }
+
+        .scrolly-container {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background-color 1.2s ease;
+            z-index: 10;
+        }
+
+        .scrolly-visual {
+            position: relative;
+            width: 60%;
+            height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .scrolly-info {
+            width: 40%;
+            padding: 4rem;
+            z-index: 10;
+        }
+
+        /* Floating Outfit System */
+        .outfit-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.8) translateY(40px);
+            transition: all 1s cubic-bezier(0.23, 1, 0.32, 1);
+            pointer-events: none;
+        }
+
+        .outfit-layer.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Cinematic Spotlight */
+        .outfit-layer.active::before {
+            content: '';
+            position: absolute;
+            width: 80vh;
+            height: 80vh;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .floating-asset {
+            width: 85%;
+            height: 85vh;
+            max-width: 700px;
+            height: auto;
+            object-fit: contain;
+            animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(0 40px 100px rgba(0, 0, 0, 0.9));
+            z-index: 10;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(2deg);
+            }
+        }
+
+        .floating-accessory {
+            position: absolute;
+            width: 150px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.4));
+            z-index: 5;
+            transition: all 1s ease;
+        }
+
+        .hat {
+            top: -15%;
+            right: 5%;
+            animation: float 7s ease-in-out infinite;
+            width: 200px;
+            transform: rotate(5deg);
+        }
+
+        .necklace {
+            top: 15%;
+            left: -10%;
+            animation: float 5.5s ease-in-out infinite reverse;
+            width: 130px;
+            transform: rotate(-10deg);
+        }
+
+        .bracelets {
+            bottom: 10%;
+            right: -10%;
+            animation: float 6.5s ease-in-out infinite 1s;
+            width: 120px;
+            transform: rotate(15deg);
+        }
+
+        .bowl {
+            bottom: -5%;
+            left: -5%;
+            animation: float 8.5s ease-in-out infinite 0.5s;
+            width: 180px;
+            transform: rotate(-5deg);
+        }
+
+        .headband {
+            top: 45%;
+            right: -8%;
+            animation: float 6s ease-in-out infinite reverse 1.5s;
+            width: 110px;
+            transform: rotate(-8deg);
+        }
+
+        .scrolly-number {
+            font-size: 2rem;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .scrolly-title {
+            font-size: clamp(3rem, 6vw, 6rem);
+            margin-bottom: 1.5rem;
+            line-height: 0.9;
+        }
+
+        .scrolly-desc {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 500px;
+        }
+
+        .trigger-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .trigger-zone {
+            height: 100vh;
+            width: 100%;
+        }
+
+        .scrolly-nav-dots {
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 100;
+        }
+
+        .scrolly-dot {
+            width: 10px;
+            height: 10px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            transition: var(--transition-smooth);
+        }
+
+        .scrolly-dot.active {
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+            transform: scale(1.5);
+        }
+
+        /* STATS & SCALE */
+        #impact {
+            padding: 10rem 2rem;
+            background: var(--cream-dark);
+            color: var(--text-dark);
+            text-align: center;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 4rem auto;
+        }
+
+        .impact-val {
+            font-size: 5rem;
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            display: block;
+        }
+
+        .impact-label {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--brown);
+        }
+
+        /* MAINS D'OR (Craftsmanship) */
+        #craftsmanship {
+            padding: 12rem 2rem;
+            background: var(--dark);
+            color: var(--cream);
+            position: relative;
+        }
+
+        .craft-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 6rem auto 0;
+        }
+
+        .craft-card {
+            border-top: 1px solid var(--gold);
+            padding-top: 2rem;
+            transition: var(--transition-smooth);
+        }
+
+        .craft-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .craft-card h3 {
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .craft-card p {
+            font-size: 1rem;
+            line-height: 1.8;
+            opacity: 0.7;
+        }
+
+        .diplomacy-label {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(184, 134, 11, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 2rem;
+        }
+
+        /* CTA */
+        #final {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: var(--dark);
+            position: relative;
+        }
+
+        .cta-btn {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 1.5rem 4rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 3rem;
+        }
+
+        .cta-btn:hover {
+            background: var(--gold);
+            color: var(--dark);
+            box-shadow: 0 0 50px rgba(184, 134, 11, 0.4);
+        }
+
+        @media (max-width: 1024px) {
+            .scrolly-container {
+                flex-direction: column;
+                justify-content: flex-start;
+            }
+
+            .scrolly-visual {
+                width: 100%;
+                height: 45vh;
+                margin-top: 2rem;
+            }
+
+            .scrolly-info {
+                width: 100%;
+                text-align: center;
+                padding: 2rem;
+                margin-top: -5vh;
+            }
+
+            .scrolly-title {
+                font-size: 3.5rem;
+            }
+
+            .impact-grid,
+            .craft-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .craftsmanship {
+                padding: 6rem 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem !important;
+            }
+
+            .scrolly-title {
+                font-size: 2.5rem;
+            }
+
+            .scrolly-desc {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+
+            .scrolly-nav-dots {
+                display: none;
+            }
+
+            .impact-val {
+                font-size: 3rem;
+            }
+
+            #craftsmanship h2 {
+                font-size: 2.5rem;
+            }
+
+            .floating-asset {
+                width: 90%;
+                height: auto;
+                max-height: 40vh;
+            }
+        }
+    </style>
+</head>
+
+<body class="pattern-wax">
+
+    <div id="progress-bar"></div>
+    <div class="wordmark">KADIOR</div>
+
+    <!-- AUDIO SYSTEM -->
+    <div id="audio-toggle" onclick="toggleAudio()" title="Activer/Couper le son">
+        <div class="sound-wave muted" id="visualizer">
+            <span style="animation-delay: 0.1s"></span>
+            <span style="animation-delay: 0.3s"></span>
+            <span style="animation-delay: 0.2s"></span>
+        </div>
+    </div>
+    <audio id="ambient-audio" loop preload="auto">
+        <source src="ambience.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- NARRATIVE SECTION 1: THE CALL -->
+    <section id="hero" class="pattern-diamond"
+        style="background: radial-gradient(circle at center, #1a2c4a 0%, #0a1122 100%); position: relative;">
+        <canvas id="hero-canvas"></canvas>
+        <div class="reveal accent" style="color: var(--gold); font-size: 1.5rem; z-index: 10;">Foire de Riyad · 2026
+        </div>
+        <h1 class="hero-title" id="hero-title" style="z-index: 10;">SÉNÉGAL EXPÉRIENCE</h1>
+        <div class="reveal accent" style="font-size: 2.5rem; color: var(--gold); transition-delay: 1s; z-index: 10;">The
+            Living Journey</div>
+        <div class="reveal"
+            style="max-width: 700px; margin-top: 2rem; transition-delay: 1.5s; font-style: italic; line-height: 1.6; z-index: 10;">
+            "Au Sénégal, l'histoire ne se raconte pas uniquement par les mots. Elle se tisse, se brode et se porte."
+        </div>
+        <button class="hero-cta reveal" style="transition-delay: 2s;"
+            onclick="document.getElementById('concept').scrollIntoView({behavior: 'smooth'})">Découvrir
+            l'Expérience</button>
+        <div class="scroll-hint" onclick="document.getElementById('concept').scrollIntoView({behavior: 'smooth'})">↓
+        </div>
+    </section>
+
+    <!-- NARRATIVE SECTION 2: THE VISION -->
+    <section id="concept" class="pattern-bogolan">
+        <div class="concept-inner">
+            <span class="reveal accent" style="color: var(--gold);">— Notre Vision</span>
+            <h2 class="reveal" style="font-size: 3.5rem; margin-top: 1rem;">L'habit comme épopée</h2>
+            <div class="concept-text reveal stagger-1">
+                <p>Chaque couture est une phrase. Chaque broderie, une strophe. KADIOR ne crée pas seulement des
+                    vêtements ; nous assemblons les fragments d'une civilisation pour les offrir au monde.</p>
+                <p>À Riyad, nous ne défilerons pas. Nous ferons respirer le Sénégal.</p>
+            </div>
+            <blockquote class="quote reveal accent">
+                "Porter une tenue KADIOR, c'est habiter une page d'histoire vivante."
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- NARRATIVE SECTION 3: THE HEART (SCROLLYTELLING JOURNEY) -->
+    <section id="ethnie-journey">
+        <div class="scrolly-container" id="scrolly-view">
+            <div class="scrolly-visual">
+                <!-- PEUL -->
+                <div class="outfit-layer active" data-id="0">
+                    <img src="peul_outfit.png" alt="Tenue Peul Traditionnelle" class="floating-asset">
+                    <img src="peul_hat.png" alt="Chapeau Peul" class="floating-accessory hat">
+                    <img src="peul_necklace.png" alt="Collier Peul" class="floating-accessory necklace">
+                    <img src="peul_bracelets.png" alt="Bracelets Peul" class="floating-accessory bracelets">
+                    <img src="peul_bowl.png" alt="Calebasse Peul" class="floating-accessory bowl">
+                    <img src="peul_headband.png" alt="Serre-tête Peul" class="floating-accessory headband">
+                </div>
+                <!-- SONINKE -->
+                <div class="outfit-layer" data-id="1">
+                    <img src="soninke_outfit.png" alt="Tenue Soninké Traditionnelle" class="floating-asset"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <svg class="floating-asset" viewBox="0 0 400 600" style="display:none;">
+                        <defs>
+                            <radialGradient id="grad1">
+                                <stop offset="0%" stop-color="#1a237e" />
+                                <stop offset="100%" stop-color="#0d1137" />
+                            </radialGradient>
+                            <pattern id="soninkePattern" x="0" y="0" width="40" height="40"
+                                patternUnits="userSpaceOnUse">
+                                <path d="M0 20 L20 0 L40 20 L20 40 Z" fill="none" stroke="#B8860B" stroke-width="0.5"
+                                    opacity="0.3" />
+                            </pattern>
+                        </defs>
+                        <path d="M80,80 Q200,30 320,80 L380,580 L20,580 Z" fill="url(#grad1)" />
+                        <path d="M80,80 Q200,30 320,80 L380,580 L20,580 Z" fill="url(#soninkePattern)" />
+                        <rect x="180" y="150" width="40" height="300" fill="#B8860B" opacity="0.2" />
+                        <circle cx="200" cy="180" r="10" fill="#B8860B" opacity="0.6" />
+                    </svg>
+                </div>
+                <!-- WOLOF -->
+                <div class="outfit-layer" data-id="2">
+                    <img src="wolof_outfit.png" alt="Tenue Wolof Traditionnelle" class="floating-asset"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <svg class="floating-asset" viewBox="0 0 400 600" style="display:none;">
+                        <defs>
+                            <radialGradient id="gradWolof">
+                                <stop offset="0%" stop-color="#FFF8DC" />
+                                <stop offset="100%" stop-color="#F5ECC8" />
+                            </radialGradient>
+                            <pattern id="wolofEmbroidery" x="0" y="0" width="20" height="20"
+                                patternUnits="userSpaceOnUse">
+                                <circle cx="10" cy="10" r="1" fill="#B8860B" opacity="0.4" />
+                            </pattern>
+                        </defs>
+                        <path d="M40,40 L360,40 L390,560 L10,560 Z" fill="url(#gradWolof)" />
+                        <path d="M40,40 L360,40 L390,560 L10,560 Z" fill="url(#wolofEmbroidery)" />
+                        <!-- Golden Neckline -->
+                        <path d="M160,40 Q200,80 240,40" fill="none" stroke="#B8860B" stroke-width="4" />
+                        <rect x="195" y="40" width="10" height="520" fill="#B8860B" opacity="0.3" />
+                    </svg>
+                </div>
+                <!-- SERERE -->
+                <div class="outfit-layer" data-id="3">
+                    <img src="serere_outfit.png" alt="Tenue Sérère Traditionnelle" class="floating-asset"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <svg class="floating-asset" viewBox="0 0 400 600" style="display:none;">
+                        <defs>
+                            <radialGradient id="gradSerere">
+                                <stop offset="0%" stop-color="#004d33" />
+                                <stop offset="100%" stop-color="#002b1b" />
+                            </radialGradient>
+                            <pattern id="serereStripes" x="0" y="0" width="40" height="40"
+                                patternUnits="userSpaceOnUse">
+                                <rect x="0" y="0" width="40" height="4" fill="#FFFFFF" opacity="0.1" />
+                                <rect x="0" y="20" width="40" height="2" fill="#B8860B" opacity="0.2" />
+                            </pattern>
+                        </defs>
+                        <path d="M100,60 L300,60 L340,540 L60,540 Z" fill="url(#gradSerere)" />
+                        <path d="M100,60 L300,60 L340,540 L60,540 Z" fill="url(#serereStripes)" />
+                        <rect x="60" y="480" width="280" height="30" fill="#B8860B" opacity="0.4" />
+                        <path d="M200,60 L200,540" stroke="#FFFFFF" stroke-width="1" stroke-dasharray="15,15"
+                            opacity="0.3" />
+                    </svg>
+                </div>
+                <!-- DIOLA -->
+                <div class="outfit-layer" data-id="4">
+                    <img src="diola_outfit.png" alt="Tenue Diola Traditionnelle" class="floating-asset"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <svg class="floating-asset" viewBox="0 0 400 600" style="display:none;">
+                        <defs>
+                            <radialGradient id="gradDiola">
+                                <stop offset="0%" stop-color="#8b0000" />
+                                <stop offset="100%" stop-color="#2a0000" />
+                            </radialGradient>
+                            <pattern id="diolaCircles" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                                <circle cx="30" cy="30" r="20" fill="none" stroke="#B8860B" stroke-width="0.5"
+                                    opacity="0.2" />
+                                <circle cx="30" cy="30" r="10" fill="none" stroke="#B8860B" stroke-width="0.3"
+                                    opacity="0.1" />
+                            </pattern>
+                        </defs>
+                        <path d="M60,80 L340,80 L370,520 L30,520 Z" fill="url(#gradDiola)" />
+                        <path d="M60,80 L340,80 L370,520 L30,520 Z" fill="url(#diolaCircles)" />
+                        <circle cx="200" cy="140" r="50" fill="none" stroke="#B8860B" stroke-width="2" opacity="0.3" />
+                        <path d="M150,520 L250,520" stroke="#B8860B" stroke-width="10" opacity="0.5" />
+                    </svg>
+                </div>
+                <!-- MANKAGNE -->
+                <div class="outfit-layer" data-id="5">
+                    <img src="mankagne_outfit.png" alt="Tenue Mankagne Traditionnelle" class="floating-asset"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <svg class="floating-asset" viewBox="0 0 400 600" style="display:none;">
+                        <defs>
+                            <radialGradient id="gradMankagne">
+                                <stop offset="0%" stop-color="#1a2e4a" />
+                                <stop offset="100%" stop-color="#001122" />
+                            </radialGradient>
+                            <pattern id="mankagnePattern" x="0" y="0" width="30" height="30"
+                                patternUnits="userSpaceOnUse">
+                                <line x1="0" y1="0" x2="30" y2="30" stroke="#B8860B" stroke-width="0.5" opacity="0.2" />
+                                <line x1="30" y1="0" x2="0" y2="30" stroke="#B8860B" stroke-width="0.5" opacity="0.2" />
+                            </pattern>
+                        </defs>
+                        <path d="M120,40 L280,40 L310,560 L90,560 Z" fill="url(#gradMankagne)" />
+                        <path d="M120,40 L280,40 L310,560 L90,560 Z" fill="url(#mankagnePattern)" />
+                        <path d="M120,530 L280,530" stroke="#B8860B" stroke-width="12" opacity="0.6" />
+                        <rect x="195" y="40" width="10" height="490" fill="#B8860B" opacity="0.2" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="scrolly-info">
+                <span class="scrolly-number" id="scrolly-num">01</span>
+                <h2 class="scrolly-title" id="scrolly-title">Peul</h2>
+                <p class="scrolly-desc accent" id="scrolly-desc">"Le vent dans le Walo, l'or aux oreilles, la démarche
+                    altière des fils du soleil."</p>
+                <p class="reveal" style="margin-top: 2rem; color: var(--gold-light);" id="scrolly-meta">Dignité Nomade ·
+                    15 Créations d'Exception</p>
+            </div>
+            <div class="scrolly-nav-dots">
+                <div class="scrolly-dot active" data-id="0"></div>
+                <div class="scrolly-dot" data-id="1"></div>
+                <div class="scrolly-dot" data-id="2"></div>
+                <div class="scrolly-dot" data-id="3"></div>
+                <div class="scrolly-dot" data-id="4"></div>
+                <div class="scrolly-dot" data-id="5"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NARRATIVE SECTION 4: MAINS D'OR (THE CRAFT) -->
+    <section id="craftsmanship" class="pattern-wax">
+        <div class="concept-inner">
+            <div class="diplomacy-label reveal">Artisanat & Diplomatie</div>
+            <h2 class="reveal" style="font-size: 4rem;">Mains d'Or du Sénégal</h2>
+            <p class="reveal"
+                style="margin-top: 2rem; opacity: 0.8; font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Ce volet honore les artisans sénégalais et démontre que la création locale est vivante, innovante et
+                capable de dialoguer avec les standards internationaux du luxe.
+            </p>
+
+            <div class="craft-grid">
+                <div class="craft-card reveal-up">
+                    <h3>Textile</h3>
+                    <p>Tissage, broderie et teinture artisanale. Chaque tenue est accompagnée d'une narration voix off
+                        (FR + EN) expliquant sa symbolique ancestrale.</p>
+                </div>
+                <div class="craft-card reveal-up stagger-1">
+                    <h3>Maroquinerie</h3>
+                    <p>Cuir et accessoires de création locale. Un pont émotionnel entre le public de Riyad et les
+                        maîtres artisans restés au Sénégal.</p>
+                </div>
+                <div class="craft-card reveal-up stagger-2">
+                    <h3>Bijouterie</h3>
+                    <p>Or, ambre et pierres précieuses. Une tradition sahélienne sublimée par les Griots et la richesse
+                        de la musique mandingue.</p>
+                </div>
+            </div>
+
+            <div class="reveal"
+                style="margin-top: 6rem; padding: 2rem; border: 1px dashed var(--gold); background: rgba(0,0,0,0.3); max-width: 600px; margin-left: auto; margin-right: auto;">
+                <span class="scrolly-number" style="font-size: 1rem; margin-bottom: 0.5rem;">Note de Conception</span>
+                <p style="font-size: 0.9rem; opacity: 0.6; line-height: 1.6;">
+                    <strong>Adaptation Saoudienne :</strong> Silhouettes couvrantes et luxe discret,
+                    respectant les normes de pudeur tout en célébrant la finesse de l'artisanat West-Africain.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- NARRATIVE SECTION 5: THE IMPACT -->
+    <section id="impact" class="pattern-wax">
+        <h2 class="reveal" style="font-size: 3rem;">L'Ambition en Chiffres</h2>
+        <div class="impact-grid">
+            <div class="reveal-scale">
+                <span class="impact-val" data-target="15">0</span>
+                <span class="impact-label">Mannequins d'Élite</span>
+            </div>
+            <div class="reveal-scale stagger-1">
+                <span class="impact-val" data-target="600">0</span>
+                <span class="impact-label">Métrage de Tissu</span>
+            </div>
+            <div class="reveal-scale stagger-2">
+                <span class="impact-val" data-target="34000000">0</span>
+                <span class="impact-label">Budget Total (FCFA)</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- NARRATIVE SECTION 5: THE FINALE -->
+    <section id="final">
+        <div class="reveal">
+            <span class="accent" style="color: var(--gold); font-size: 1.5rem;">Dakar → Riyad · 30 Mars — 6 Avril
+                2026</span>
+            <h2 style="font-size: 4rem; margin-top: 1rem;">Écrivons la suite ensemble.</h2>
+            <button class="cta-btn" onclick="triggerCTA()">Consulter le dossier complet</button>
+        </div>
+        <footer
+            style="position: absolute; bottom: 2rem; width: 100%; text-align: center; opacity: 0.4; font-size: 0.8rem;">
+            <p>© 2026 KADIOR · Maison de Haute Couture Traditionnelle · Sénégal</p>
+            <p style="margin-top: 0.5rem;">Ce site a été fait par <a href="http://www.lolly.sn" target="_blank"
+                    style="color: inherit; text-decoration: underline;">LOLLY SAS</a></p>
+        </footer>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Progress Bar
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = (winScroll / height) * 100;
+                document.getElementById("progress-bar").style.width = scrolled + "%";
+            });
+
+            // 2. Hero Anim
+            const heroTitle = document.getElementById('hero-title');
+            const text = "SÉNÉGAL EXPÉRIENCE";
+            heroTitle.innerHTML = text.split('').map((char, i) =>
+                `<span style="transition-delay: ${0.3 + i * 0.05}s">${char === ' ' ? '&nbsp;' : char}</span>`
+            ).join('');
+
+            setTimeout(() => {
+                heroTitle.querySelectorAll('span').forEach(s => s.classList.add('active'));
+            }, 100);
+
+            // 3. Narrative Scrollytelling Progress Logic
+            const section = document.getElementById('ethnie-journey');
+            const layers = document.querySelectorAll('.outfit-layer');
+            const dots = document.querySelectorAll('.scrolly-dot');
+            const view = document.getElementById('scrolly-view');
+
+            const journeyData = [
+                { title: 'Peul : La Dignité Nomade', desc: 'Le vent du Walo murmure à l\'oreille des bergers d\'or. Une silhouette qui fend l\'horizon, drapée dans l\'étoffe des rois pasteurs.', meta: '3 Créations · Soie & Filigrane d\'Or', bg: '#0d1f33' },
+                { title: 'Soninké : L\'Éclat de l\'Empire', desc: 'Héritiers du prestigieux Ghana, maîtres de l\'indigo profond et des caravanes sahariennes. Porter l\'histoire de la terre aurifère.', meta: '2 Créations · Indigo Naturel & Ambre', bg: '#2d1000' },
+                { title: 'Wolof : La Noblesse Urbaine', desc: 'Le port de reine, l\'élégance absolue de Dakar. Quand la broderie d\'apparat rencontre la modernité d\'une civilisation de raffinement.', meta: '3 Créations · Broderie à la main & Organza', bg: '#1a1a00' },
+                { title: 'Sérère : La Sagesse des Marées', desc: 'Ancrage profond dans la terre promise. Le coton tissé à la main, force tranquille d\'un peuple gardien des traditions millénaires.', meta: '2 Créations · Coton Bio & Coquillages', bg: '#001a11' },
+                { title: 'Diola : L\'Esprit des Bois Sacrés', desc: 'Mysticisme de Casamance. Là où le vêtement devient parure rituelle, écho vibrant des danses sous les fromagers géants.', meta: '2 Créations · Fibres Brutes & Teinture Terre', bg: '#2a0000' },
+                { title: 'Mankagne : Le Tissage de l\'Honneur', desc: 'Tessitures complexes, géométrie de l\'âme. L\'élégance d\'un peuple qui ne plie jamais, dont chaque fil raconte une lignée sacrée.', meta: '3 Créations · Tissage Jacquard Traditionnel', bg: '#1a2c4a' }
+            ];
+
+            window.addEventListener('scroll', () => {
+                if (!section) return;
+
+                const rect = section.getBoundingClientRect();
+                const scrollPos = -rect.top;
+                const sectionHeight = section.offsetHeight - window.innerHeight;
+
+                if (rect.top <= 100 && rect.bottom >= 0) {
+                    const progress = Math.min(Math.max(scrollPos / sectionHeight, 0), 0.999);
+                    const idx = Math.floor(progress * journeyData.length);
+                    updateJourney(idx);
+                }
+            });
+
+            function updateJourney(idx) {
+                if (window.currentIdx === idx) return;
+                window.currentIdx = idx;
+
+                layers.forEach(l => l.classList.remove('active'));
+                if (layers[idx]) layers[idx].classList.add('active');
+
+                dots.forEach(d => d.classList.remove('active'));
+                if (dots[idx]) dots[idx].classList.add('active');
+
+                const num = document.getElementById('scrolly-num');
+                const title = document.getElementById('scrolly-title');
+                const desc = document.getElementById('scrolly-desc');
+                const meta = document.getElementById('scrolly-meta');
+
+                if (num) num.textContent = `0${idx + 1}`;
+                if (title) title.textContent = journeyData[idx].title;
+                if (desc) desc.textContent = journeyData[idx].desc;
+                if (meta) meta.textContent = journeyData[idx].meta;
+
+                if (view) view.style.backgroundColor = journeyData[idx].bg;
+            }
+
+            // 4. Counters
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.dataset.done) {
+                        animateValue(entry.target);
+                        entry.target.dataset.done = true;
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.impact-val').forEach(v => counterObserver.observe(v));
+
+            function animateValue(el) {
+                const target = parseInt(el.dataset.target);
+                let current = 0;
+                const duration = 2000;
+                const start = performance.now();
+
+                function step(timestamp) {
+                    const progress = Math.min((timestamp - start) / duration, 1);
+                    current = Math.floor(progress * target);
+                    el.textContent = current.toLocaleString('fr-FR').replace(/,/g, ' ');
+                    if (progress < 1) requestAnimationFrame(step);
+                    else el.textContent = target.toLocaleString('fr-FR').replace(/,/g, ' ');
+                }
+                requestAnimationFrame(step);
+            }
+
+            // 5. Global Reveal
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal, .reveal-scale').forEach(r => revealObserver.observe(r));
+
+            // 6. Gold Dust Particles
+            const canvas = document.getElementById('hero-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+
+                function resize() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                window.addEventListener('resize', resize);
+                resize();
+
+                class Particle {
+                    constructor() {
+                        this.init();
+                    }
+                    init() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.size = Math.random() * 2;
+                        this.speedX = (Math.random() - 0.5) * 0.5;
+                        this.speedY = (Math.random() - 0.5) * 0.5;
+                        this.alpha = Math.random();
+                    }
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        if (this.x > canvas.width) this.x = 0;
+                        if (this.x < 0) this.x = canvas.width;
+                        if (this.y > canvas.height) this.y = 0;
+                        if (this.y < 0) this.y = canvas.height;
+                    }
+                    draw() {
+                        ctx.fillStyle = `rgba(184, 134, 11, ${this.alpha * 0.5})`;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                for (let i = 0; i < 100; i++) particles.push(new Particle());
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.update();
+                        p.draw();
+                    });
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            }
+        });
+
+        function triggerCTA() {
+            window.open('KADIOR.pdf', '_blank');
+        }
+
+        // 7. Ambient Audio Logic
+        const audio = document.getElementById('ambient-audio');
+        const visualizer = document.getElementById('visualizer');
+        let isMuted = true;
+        audio.volume = 0; // Start at zero for fade-in
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    isMuted = false;
+                    visualizer.classList.remove('muted');
+                    fadeIn(audio, 0.2, 2000); // Fade to 20% over 2s
+                }).catch(err => console.log("Audio play blocked by browser"));
+            } else {
+                fadeOut(audio, 2000, () => {
+                    audio.pause();
+                    isMuted = true;
+                    visualizer.classList.add('muted');
+                });
+            }
+        }
+
+        function fadeIn(elem, targetVol, duration) {
+            let start = performance.now();
+            let startVol = elem.volume;
+
+            function step(timestamp) {
+                let progress = Math.min((timestamp - start) / duration, 1);
+                elem.volume = startVol + (targetVol - startVol) * progress;
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function fadeOut(elem, duration, callback) {
+            let start = performance.now();
+            let startVol = elem.volume;
+
+            function step(timestamp) {
+                let progress = Math.min((timestamp - start) / duration, 1);
+                elem.volume = startVol * (1 - progress);
+                if (progress < 1) requestAnimationFrame(step);
+                else if (callback) callback();
+            }
+            requestAnimationFrame(step);
+        }
+
+        // Auto-play on first interaction (Click or Touch)
+        const initAudio = () => {
+            if (isMuted) {
+                toggleAudio();
+                document.removeEventListener('click', initAudio);
+                document.removeEventListener('touchstart', initAudio);
+            }
+        };
+        document.addEventListener('click', initAudio);
+        document.addEventListener('touchstart', initAudio);
+    </script>
+</body>
+
+</html>
