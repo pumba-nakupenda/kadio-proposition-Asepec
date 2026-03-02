@@ -1891,7 +1891,7 @@
                     </div>
                     <h3>Expert Costumier</h3>
                     <span>Spécialiste Mode Traditionnelle</span>
-                    <p>Gestion des 30 tenues ethniques et habillage des mannequins.</p>
+                    <p>Gestion des 15 tenues ethniques et habillage des mannequins.</p>
                 </div>
                 <div class="team-card reveal-up stagger-2">
                     <div class="team-img-wrapper">
@@ -1919,7 +1919,7 @@
             </div>
             <p class="reveal" style="opacity: 0.5; font-style: italic; margin-top: 3.5rem; padding: 0 1rem;">Recrutement
                 de 15 mannequins &
-                10 hôtesses bilingues à Riyad.</p>
+                10 hôtesses Trilingues à Riyad.</p>
         </div>
     </section>
 
@@ -2249,6 +2249,25 @@
         };
         document.addEventListener('click', initAudio);
         document.addEventListener('touchstart', initAudio);
+
+        // Visibility Management: Pause audio when leaving the site
+        let wasPlayingBeforeHide = false;
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (!audio.paused) {
+                    wasPlayingBeforeHide = true;
+                    audio.pause();
+                    visualizer.classList.add('muted');
+                }
+            } else {
+                if (wasPlayingBeforeHide) {
+                    audio.play().then(() => {
+                        visualizer.classList.remove('muted');
+                        wasPlayingBeforeHide = false;
+                    }).catch(err => console.log("Resume blocked"));
+                }
+            }
+        });
     </script>
 </body>
 
